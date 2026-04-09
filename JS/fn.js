@@ -1,6 +1,6 @@
 //me di cuenta del error de que hay que ir comentando cada ejercicio para poder ejecutarlo.
 //ejercicio 1 saludo en alerta 'hola mundo'
-let botonSaludo=document.getElementById('saludo');
+/*let botonSaludo=document.getElementById('saludo');
 botonSaludo.addEventListener('click',function saludo() {
     alert('¡hola mundo!');
 });
@@ -458,4 +458,4 @@ botonLimpiar.addEventListener('click', function limpiar(){
     document.getElementById('n1').value = '';
     document.getElementById('n2').value = '';
     document.getElementById('resultado25').textContent = '';
-});
+});*/
