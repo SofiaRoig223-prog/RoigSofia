@@ -1,4 +1,5 @@
-//me di cuenta del error de que hay que ir comentando cada ejercicio para poder ejecutarlo.
+/*me di cuenta del error de que hay que ir comentando cada ejercicio 
+para poder ejecutar el siguiente.*/
 //ejercicio 1 saludo en alerta 'hola mundo'
 /*let botonSaludo=document.getElementById('saludo');
 botonSaludo.addEventListener('click',function saludo() {
