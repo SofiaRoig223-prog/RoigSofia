@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!--HTML-->
+    <h1>Multiverso de Personajes</h1>
+    <input type="text" id="busqueda">
+    <select id="opciones">
+        <option>Rick and Morty</option>
+        <option>Los Simpsons</option>
+        <option>Ambos</option>
+    </select>
+    <button id="buscar">Buscar</button>
+    <div id="renderizar"></div>
+    <div id="estadisticas"></div>
+    <div id="favoritos"></div>
+
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+    <script>
+        const busqueda=document.getElementById("busqueda").value;
+        const opciones=document.getElementById("opciones");
+        const botonBuscar=document.getElementById("buscar");
+        const renderizar=document.getElementById("renderizar");
+        const estadisticas=document.getElementById("estadisticas");
+        const favoritos=document.getElementById("favoritos");
+
+        async function textoBusqueda(busqueda){
+            try{
+                const [res1] = await Promise.all([
+                    fetch(`https://rickandmortyapi.com/api/character/?name=${busqueda}`)
+                ]);
+                let unPersonaje = await res1.json();
+                console.log(unPersonaje);
+            } catch (error){
+                renderizar.innerHTML=(`Error al buscar: ${error.message}`);
+            }
+        }
+        //botonBuscar=document.addEventListener('click', function(){
+
+        //})
+        async function personajesSimpson() {
+                try {
+                    const [res2] = await Promise.all([
+                    fetch(`https://thesimpsonsapi.com/api/characters`)
+                    ]);
+                    let losPersonajes = await res2.json();
+                    console.log(losPersonajes);
+                } catch (error) {
+                    renderizar.innerHTML=(`Error al buscar: ${error.message}`);
+                }
+            }
+
+
+    </script>
+    
+</body>
+</html>

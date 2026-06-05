@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Parcial </h1>
+    <button id="mostrar1" onclick="totalPokemon()">Mostrar 1 Ejercicio</button>
+    <button id="mostrar2" onclick="ejercicio2()">Mostrar 2 Ejercicio</button>
+    <button id="mostrar2" onclick="ejercicio3()">Mostrar 3 Ejercicio</button>
+    <button id="mostrar4">Mostrar 4 Ejercicio</button>
+    <button id="mostrar5">Mostrar 5 Ejercicio</button>
+    <div id="resultado1"></div>
+    <div id="resultado2"></div>
+    <div id="resultado2"></div>
+    <div id="resultado2"></div>
+    <div id="resultado2"></div>
+    <lo id="lista"></lo>
+
+    <script>
+        const botonMostrar1=document.getElementById('mostrar1');
+        const botonMostrar2 = document.getElementById('mostrar2');
+        const botonMostrar3 = document.getElementById('mostrar3');
+        const botonMostrar4 = document.getElementById('mostrar4');
+        const botonMostrar5 = document.getElementById('mostrar5');
+
+        const resultado1=document.getElementById('resultado1');
+        
+        const resultado3 = document.getElementById('resultado3');
+        const resultado4 = document.getElementById('resultado4');
+        const resultado5 = document.getElementById('resultado5');
+        const resultado2 = document.getElementById('resultado2');
+        const lista=document.getElementById('lista');
+
+
+        async function totalPokemon(){
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=100000`);
+            const data = await response.json();
+            personajes=data.results;
+            botonMostrar1.addEventListener('click', function mostrarEjercicio1(){
+            resultado1.innerHTML=`total pokemons ${personajes.lenght}`;
+            })
+        };
+
+        //ejercicio 2//
+        function ejercicio2(){
+        fetch(`https://pokeapi.co/api/v2/pokemon?limit=500`)
+        .then(response => response.json())
+        .then(data => {
+            personajes=data.results;
+            console.log(personajes);
+            
+            const personajesChu=personajes.filter(personajes => personajes.name === "chu");
+            console.log(personajesChu);
+
+            resultado2.innerHTML=`personajes con nombre terminado en "chu" ${personajesChu}`;
+        })
+        };
+
+        //ejercicio 3//
+        function ejercicio3(){
+            async function pokemon() {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/pikachu`);
+                const data = await response.json();
+                botonMostrar3.addEventListener('click', function mostrarEjercicio3(){
+                    resultado3=innerHTML=`nombre: ${data.name}`;
+
+
+                })
+                
+        }
+    }
+
+    </script>
+</body>
+</html>
