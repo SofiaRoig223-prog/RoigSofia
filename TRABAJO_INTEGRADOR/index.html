@@ -8,13 +8,25 @@
 <body>
     <!--HTML-->
     <h1>Multiverso de Personajes</h1>
-    <input type="text" id="busqueda">
+    <input type="text" id="busqueda" placeholder="Ingrese nombre y apellido de personaje">
     <select id="opciones">
-        <option>Rick and Morty</option>
-        <option>Los Simpsons</option>
-        <option>Ambos</option>
+        <option value="Rick and Morty">Rick and Morty</option>
+        <option value="Los Simpsons">Los Simpsons</option>
+        <option value="Ambos">Ambos</option>
     </select>
     <button id="buscar">Buscar</button>
+    <br>
+    <br>
+    <select id="opciones2" hidden>
+        <option value="Alive">Vivo</option>
+        <option value="Dead">Muerto</option>
+        <option value="unknown">Desconocido</option>
+    </select>
+    <select id="opciones3" hidden>
+        <option value="A-Z">Ordenar A-Z</option>
+        <option value="Z-A">Ordenar Z-A</option>
+    </select>
+    <button id="mostrarFiltrados">Mostrar Filtrados</button>
     <div id="renderizar"></div>
     <div id="estadisticas"></div>
     <div id="favoritos"></div>
@@ -22,40 +34,236 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
     <script>
-        const busqueda=document.getElementById("busqueda").value;
-        const opciones=document.getElementById("opciones");
-        const botonBuscar=document.getElementById("buscar");
-        const renderizar=document.getElementById("renderizar");
-        const estadisticas=document.getElementById("estadisticas");
-        const favoritos=document.getElementById("favoritos");
+        const busqueda = document.getElementById("busqueda");
+        const opciones = document.getElementById("opciones");
+        const botonBuscar = document.getElementById("buscar");
+        const renderizar = document.getElementById("renderizar");
+        const estadisticas = document.getElementById("estadisticas");
+        const favoritos = document.getElementById("favoritos");
+        const opciones2 = document.getElementById("opciones2");
+        const opciones3 = document.getElementById("opciones3");
+        const botonMostrarFiltrados = document.getElementById("mostrarFiltrados");
 
-        async function textoBusqueda(busqueda){
+botonBuscar.addEventListener('click', ()=>{
+        if (opciones.value === "Rick and Morty"){
+        async function personajesRM(nombre){
             try{
-                const [res1] = await Promise.all([
-                    fetch(`https://rickandmortyapi.com/api/character/?name=${busqueda}`)
-                ]);
-                let unPersonaje = await res1.json();
-                console.log(unPersonaje);
+                if (nombre === "" || nombre === null) {
+                    const resp = await fetch(`https://rickandmortyapi.com/api/character`)
+                    if (!resp.ok){
+                        throw new Error(`Algo salio mal: ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    console.log(data.results);
+                }
+                else if (nombre !== "" || nombre !== null){
+                    const resp = await fetch(`https://rickandmortyapi.com/api/character/?name=${nombre}`)
+                    if (!resp.ok) {
+                        throw new Error(`Algo salio mal: ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    console.log(data.results);
+                }
             } catch (error){
-                renderizar.innerHTML=(`Error al buscar: ${error.message}`);
+                renderizar.innerHTML=`ocurrio un Error: ${error.message}`;
             }
         }
-        //botonBuscar=document.addEventListener('click', function(){
-
-        //})
-        async function personajesSimpson() {
+        personajesRM(busqueda.value.toLowerCase());
+        } 
+        else if (opciones.value === "Los Simpsons"){
+            async function personajesLS() {
                 try {
-                    const [res2] = await Promise.all([
-                    fetch(`https://thesimpsonsapi.com/api/characters`)
-                    ]);
-                    let losPersonajes = await res2.json();
-                    console.log(losPersonajes);
+                    const resp = await fetch(`https://thesimpsonsapi.com/api/characters`)
+                    if (!resp.ok) {
+                        throw new Error(`Algo salio mal: ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    console.log(data.results);
                 } catch (error) {
-                    renderizar.innerHTML=(`Error al buscar: ${error.message}`);
+                    renderizar.innerHTML = `ocurrio un Error: ${error.message}`;
                 }
             }
+            personajesLS();
+        }
+        else {
+            async function personajesTodos() {
+                try {
+                    const [res1, res2] = await Promise.all([
+                        fetch(`https://rickandmortyapi.com/api/character`),
+                        fetch(`https://thesimpsonsapi.com/api/characters`),
+                    ]);
+                    if (!res1.ok && !res2.ok) {
+                        throw new Error(`Algo salio mal: ${res1.status}`);
+                        throw new Error(`Algo salio mal: ${res2.status}`);
+                    }
 
+                    let rickM = await res1.json();
+                    let losS = await res2.json();
+                    
+                    opciones2.hidden=false; //hace aparecer el selector2
+                    opciones3.hidden=false;
 
+                    const normalizadosRM = rickM.results.map(p => ({
+                        id: p.id,
+                        nombre: p.name,
+                        imagen: p.image,
+                        estado: p.status,
+                        genero: p.gender,
+                        detalle: p.species,
+                        origen: "rickandmorty",
+                    }));
+                    const normalizadosLS = losS.results.map(p => ({
+                        id: p.id,
+                        nombre: p.name,
+                        imagen: `https://cdn.thesimpsonsapi.com/200${p.portrait_path}`,
+                        estado: p.status,
+                        genero: p.gender,
+                        detalle: p.occupation,
+                        origen: "simpsons",
+                    }));
+
+                    todosLosPersonajes=[...normalizadosRM,...normalizadosLS];
+                    //console.log(todosLosPersonajes);
+                    let personajesFinales=[];
+                    opciones2.addEventListener('change', ()=>{
+                        if (opciones2.value === "Alive") {
+                            personajesFinales=todosLosPersonajes.filter(vivos => vivos.estado === "Alive");
+                            console.log(personajesFinales);
+                            //opciones2.disabled = true;
+                        }
+                        else if (opciones2.value === "Dead"){
+                            personajesFinales = todosLosPersonajes.filter(muertos => muertos.estado === "Dead");
+                            console.log(personajesFinales);
+                            //opciones2.disabled = true;
+                        }
+                        else {
+                            personajesFinales = todosLosPersonajes.filter(desconocidos => desconocidos.estado === "unknown");
+                            console.log(personajesFinales);
+                        }
+                    });
+
+                    opciones3.addEventListener('change', ()=>{
+                        if (opciones3.value === "A-Z") {
+                            personajesFinales = personajesFinales.sort((a,b) => a.nombre.localeCompare(b.nombre));
+                            console.log(personajesFinales);
+                        }
+                        else {
+                            personajesFinales = personajesFinales.sort((a, b) => b.nombre.localeCompare(a.nombre));
+                            console.log(personajesFinales);
+                        }
+                    });
+
+                    botonMostrarFiltrados.addEventListener('click', ()=>{
+                        renderizar.innerHTML = "";
+                        personajesFinales.forEach(finales=>{
+                            if (finales.origen === "rickandmorty"){
+                            renderizar.innerHTML +=
+                                `<div style="
+                                    width:220px;
+                                    padding:20px;
+                                    margin:15px;
+                                    display:inline-block;
+                                    background:linear-gradient(145deg, #fff7fb, #ffe4f1);
+                                    border:3px solid #ffb6d9;
+                                    border-radius:25px;
+                                    box-shadow:0 8px 20px rgba(255,182,217,0.4);
+                                    text-align:center;
+                                    ">
+
+                                    <img src="${finales.imagen}" style="
+                                    width:150px;
+                                    height:150px;
+                                    object-fit:contain;
+                                    border-radius:20px;
+                                    background-color:white;
+                                    border:3px solid #ffd6e8;
+                                    padding:10px;
+                                    ">
+
+                                    <h2 style="
+                                    color:#ff66a3;
+                                    margin-top:15px;
+                                    font-family:'Trebuchet MS', sans-serif;
+                                    ">
+                                    🌸 ${finales.nombre}
+                                    </h2>
+
+                                    <p style="color:#8a5d72;">
+                                    <strong>Estado:</strong> ${finales.estado}
+                                    </p>
+
+                                    <p style="color:#8a5d72;">
+                                    <strong>Especie:</strong> ${finales.genero}
+                                    </p>
+
+                                    <p style="color:#8a5d72;">
+                                    <strong>Especie:</strong> ${finales.detalle}
+                                    </p>
+
+                                    </div>`
+                                    ;
+                            }
+                            else {
+                            renderizar.innerHTML+= `<div style="
+                                    width:220px;
+                                    padding:20px;
+                                    margin:15px;
+                                    display:inline-block;
+                                    background:linear-gradient(145deg, #f5fbff, #dff4ff);
+                                    border:3px solid #a8ddff;
+                                    border-radius:25px;
+                                    box-shadow:0 8px 20px rgba(168,221,255,0.4);
+                                    text-align:center;
+                                    ">
+
+                                    <img src="${finales.imagen}" style="
+                                    width:150px;
+                                    height:150px;
+                                    object-fit:contain;
+                                    border-radius:20px;
+                                    background-color:white;
+                                    border:3px solid #cdeeff;
+                                    padding:10px;
+                                    ">
+
+                                    <h2 style="
+                                    color:#4fa3d1;
+                                    margin-top:15px;
+                                    font-family:'Trebuchet MS', sans-serif;
+                                    ">
+                                    ☁️ ${finales.nombre}
+                                    </h2>
+
+                                    <p style="color:#5f7d8c;">
+                                    <strong>Estado:</strong> ${finales.estado}
+                                    </p>
+
+                                    <p style="color:#5f7d8c;">
+                                    <strong>Género:</strong> ${finales.genero}
+                                    </p>
+
+                                    <p style="color:#5f7d8c;">
+                                    <strong>Detalle:</strong> ${finales.detalle}
+                                    </p>
+
+                                    </div>`;
+                            }
+                            if (finales.length === 0) { 
+                                renderizar.innerHTML=`Error, sin resultados`;
+                                }
+                        })
+                    })
+                    
+
+                } catch (error) {
+                    renderizar.innerHTML = `ocurrio un Error: ${error.message}`;
+                }
+
+                
+            }
+            personajesTodos();
+        }
+        })
     </script>
     
 </body>
